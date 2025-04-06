@@ -1,0 +1,33 @@
+name: Build EXE
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Clone code
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10
+
+    - name: Install dependencies
+      run: |
+        pip install pyinstaller pydub
+        choco install ffmpeg -y
+
+    - name: Build EXE
+      run: |
+        pyinstaller --onefile --windowed audio_speed_changer.py
+
+    - name: Upload EXE
+      uses: actions/upload-artifact@v3
+      with:
+        name: audio-speed-changer-exe
+        path: dist/audio_speed_changer.exe
